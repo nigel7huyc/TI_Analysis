@@ -1,14 +1,17 @@
 import os
 import vt
 import json
-from flask import Flask, jsonfiy, request
+from flask_docs import ApiDoc
 from flask_cors import cross_origin
+from flask import Flask, jsonify, request
 
 from settings import *
 from cores.vt_hunter import LiveHuntHandler
 
 # Initialize APP
 app = Flask(__name__)
+
+ApiDoc(app, title="TI Analysis API Notes", version="1.0.0")
 
 
 @app.route('/v0.1/hunting/rules_info', methods=['GET'])
@@ -22,7 +25,8 @@ def rules_info():
     else:
         response = error_msg(SUCCESS_CODE)
         response["data"] = rules_dict
-    return jsonfiy(response)
+    return jsonify(response)
+
 
 @app.route("/v0.1/hunting/notification_info", methods=["POST"])
 @cross_origin()
@@ -30,7 +34,14 @@ def notification_info():
     params = request.json
     live_hunter = LiveHuntHandler()
     rule_id_value = params["id"]
-    notifications = live_hunter.get_notification_files(rule_id_value)
+    notifications_data = live_hunter.get_notification_files(rule_id_value)
+    if type(notifications_data) is int:
+        response = error_msg(notifications_data)
+        response["data"] = {}
+    else:
+        response = error_msg(SUCCESS_CODE)
+        response["data"] = notifications_data
+    return jsonify(response)
 
 
 if __name__ == '__main__':
