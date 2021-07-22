@@ -2,8 +2,7 @@
 .idea/
 
 ### For this Project
-pcaps/
-logs/*.log
+log/*/*.log
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -39,7 +38,7 @@ MANIFEST
 *.manifest
 *.spec
 
-# Installer logs
+# Installer log
 pip-log.txt
 pip-delete-this-directory.txt
 
