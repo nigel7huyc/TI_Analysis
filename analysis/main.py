@@ -1,36 +1,39 @@
 import os
 import vt
 import json
-import pathlib
+from flask import Flask, jsonfiy, request
+from flask_cors import cross_origin
 
 from settings import *
 from cores.vt_hunter import LiveHuntHandler
-from utils.utils_log import LogFactory
 
-logger = LogFactory.get_log("vt_log")
+# Initialize APP
+app = Flask(__name__)
 
-def get_live_hunt_results():
+
+@app.route('/v0.1/hunting/rules_info', methods=['GET'])
+@cross_origin()
+def rules_info():
     live_hunter = LiveHuntHandler()
-    ruleset_id_dict = live_hunter.get_ruleset_id()
-    json_dir = root_path.joinpath("output/ruleset_notifications").absolute().resolve()
-    if not os.path.exists(json_dir):
-        os.mkdir(json_dir)
-        logger.info("[give_live_hunt_results] Create the Directory, Named {}".format(json_dir))
-    for ruleset_id in ruleset_id_dict:
-        ruleset_name = ruleset_id_dict[ruleset_id]
-        res_data = live_hunter.get_notification_files(ruleset_id)
-        if type(res_data) is int:
-            logger.error("[give_live_hunt_results] Get Notification Files Failed, Error Code {}".format(res_data))
-            continue
-        else:
-            json_data = json.dumps(res_data, indent=4)
-            json_path = json_dir.joinpath("{}.json".format(ruleset_name)).absolute().resolve()
-            json_path.write_text(json_data)
-            logger.info("[give_live_hunt_results] Write Data into {} File".format(json_path))
-    return SUCCESS
+    rules_dict = live_hunter.get_ruleset_id()
+    if type(rules_dict) is int:
+        response = error_msg(rules_dict)
+        response["data"] = {}
+    else:
+        response = error_msg(SUCCESS_CODE)
+        response["data"] = rules_dict
+    return jsonfiy(response)
+
+@app.route("/v0.1/hunting/notification_info", methods=["POST"])
+@cross_origin()
+def notification_info():
+    params = request.json
+    live_hunter = LiveHuntHandler()
+    rule_id_value = params["id"]
+    notifications = live_hunter.get_notification_files(rule_id_value)
 
 
 if __name__ == '__main__':
-    get_live_hunt_results()
+    app.run(host="0.0.0.0", debug=True, port=8000)
 
 

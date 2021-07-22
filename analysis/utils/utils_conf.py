@@ -29,3 +29,15 @@ class LogConfigReader:
         log_data = self.get_log_conf()
         log_level_info = log_data["log_level"]
         return log_level_info
+
+# Define VT Configuration
+class TokenConfig:
+    def __init__(self):
+        self.api = None
+
+    def get_api(self, is_enterprise):
+        if is_enterprise:
+            self.api = enterprise_api_key
+        else:
+            self.api = private_api_key
+        return self.api
