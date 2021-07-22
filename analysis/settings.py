@@ -8,7 +8,7 @@ root_path = file_path.joinpath("../../").absolute().resolve()
 # State API Variables
 enterprise_api_key = os.getenv("ENTERPRISE_TOKEN")
 private_api_key = os.getenv("PRIVATE_TOKEN")
-log_dir = os.getenv("LOG_DIR", os.path.join(root_path, "logs"))
+log_dir = os.getenv("LOG_DIR", os.path.join(root_path, "log"))
 conf_dir = os.getenv("CONF_DIR", os.path.join(root_path, "conf"))
 analysis_dir = os.getenv("ANALYSIS_DIR", os.path.join(root_path, "analysis"))
 
