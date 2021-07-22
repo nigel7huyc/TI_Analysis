@@ -1,0 +1,7 @@
+{
+  "log_name": {
+    "hunter": "logs/hunter.log"
+  },
+  "log_level": 10,
+  "log_format": "%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s"
+}
