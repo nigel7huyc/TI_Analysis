@@ -1,0 +1,28 @@
+version: '3.9'
+
+services: 
+    analysis_app:
+        container_name: hunter_service
+        image: analysis_hunter:latest
+        restart: always
+        build: ./deploy/flask_app
+        volumes: 
+            - ./hunter:/var/hunter/
+            - ./log:/var/log
+            - ./conf:/etc/hunter/
+        env_file:
+            - ./.env
+        ports:
+            - "8000:8000"
+      
+    nginx:
+        container_name: nginx_service
+        image: analysis_nginx:latest
+        restart: always
+        build: ./deploy/nginx
+        volumes: 
+            - ./log/nginx:/var/log/nginx
+        ports:
+            - "80:80"
+        depends_on:
+            - analysis_app
