@@ -19,7 +19,7 @@ ApiDoc(app, title="TI Analysis API Notes", version="1.0.0")
 def rules_info():
     live_hunter = LiveHuntHandler()
     rules_dict = live_hunter.get_ruleset_id()
-    if type(rules_dict) is int:
+    if type(rules_dict) is int or rules_dict is None:
         response = error_msg(rules_dict)
         response["data"] = {}
     else:

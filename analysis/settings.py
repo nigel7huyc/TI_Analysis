@@ -22,3 +22,5 @@ def error_msg(error_code):
         0: "Operation Success",
         -1: "Query Failed"
     }
+    res = {"code": error_code, "message": error_dict[error_code]}
+    return res
