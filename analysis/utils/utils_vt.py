@@ -33,6 +33,7 @@ class VTTools:
                 json_data = client.get_json(input_url, params=params_dict)
                 if "data" in json_data:
                     final_data += json_data["data"]
+                    logger.info("There are {} element in {}".format(len(final_data), params_dict["cursor"][:10]))
                     if "cursor" in json_data["meta"]:
                         cursor_value = json_data["meta"]["cursor"]
                     else:
