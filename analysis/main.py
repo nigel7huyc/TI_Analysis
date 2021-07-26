@@ -7,6 +7,9 @@ from flask import Flask, jsonify, request
 
 from settings import *
 from cores.vt_hunter import LiveHuntHandler
+from utils.utils_log import LogFactory
+
+logger = LogFactory.get_log("hunter")
 
 # Initialize APP
 app = Flask(__name__)
@@ -32,8 +35,9 @@ def rules_info():
 @cross_origin()
 def notification_info():
     params = request.json
+    rule_id_value = params["rules_id"]
+    logger.info("[notification_info] The Rules ID is {}".format(rule_id_value))
     live_hunter = LiveHuntHandler()
-    rule_id_value = params["id"]
     notifications_data = live_hunter.get_notification_files(rule_id_value)
     if type(notifications_data) is int:
         response = error_msg(notifications_data)
