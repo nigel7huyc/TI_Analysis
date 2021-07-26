@@ -9,6 +9,7 @@ services:
         volumes: 
             - ./analysis:/var/analysis/
             - ./log/analysis:/var/log/analysis
+            - ./log/ti_audit:/var/log/ti_audit
             - ./conf:/etc/analysis/
         env_file:
             - envs/certificate.env
