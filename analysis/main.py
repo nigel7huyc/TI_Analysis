@@ -35,16 +35,17 @@ def rules_info():
 @cross_origin()
 def notification_info():
     params = request.json
-    rule_id_value = params["rules_id"]
-    logger.info("[notification_info] The Rules ID is {}".format(rule_id_value))
     live_hunter = LiveHuntHandler()
+    rule_id_value = params["rules_id"]
+    save_path = "hunting_notifications/{}.json".format(rule_id_value)
+    logger.info("[notification_info] The Rules ID is {}".format(rule_id_value))
     notifications_data = live_hunter.get_notification_files(rule_id_value)
     if type(notifications_data) is int:
         response = error_msg(notifications_data)
-        response["data"] = {}
     else:
         response = error_msg(SUCCESS_CODE)
-        response["data"] = notifications_data
+        store_jsonfile(save_path, notifications_data)
+        logger.info("[notification_info] Store Notification Data into {}".format(save_path))
     return jsonify(response)
 
 

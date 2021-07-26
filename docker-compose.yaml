@@ -10,6 +10,7 @@ services:
             - ./analysis:/var/analysis/
             - ./log/analysis:/var/log/analysis
             - ./log/ti_audit:/var/log/ti_audit
+            - ./output:/home/analysis
             - ./conf:/etc/analysis/
         env_file:
             - envs/certificate.env
