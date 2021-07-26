@@ -2,7 +2,7 @@ import vt
 from settings import *
 from utils.utils_log import LogFactory
 
-logger = LogFactory.get_log("vt_log")
+logger = LogFactory.get_log("hunter")
 
 
 class VTTools:
