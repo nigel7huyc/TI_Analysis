@@ -56,7 +56,7 @@ class LiveHuntHandler:
         api_key = self.vt_tools.get_api(api_flag)
         query_url = os.path.join(self.url_prefix, "hunting_rulesets", ruleset_id, "hunting_notification_files")
         with vt.Client(api_key, trust_env=True) as client:
-            notified_files_json = client.get_json(query_url)
+            notified_files_json = client.get_json(query_url, params=self.extra_params)
         if "data" in notified_files_json:
             json_data = notified_files_json["data"]
             if "cursor" in notified_files_json["meta"]:
