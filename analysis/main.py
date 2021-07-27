@@ -53,7 +53,8 @@ def notification_info():
         logger.info("[notification_info] Store Notification Data into {}".format(save_path))
     return jsonify(response)
 
-@app.route("/v3/Files/relationships", methods=["POST"])
+
+@app.route("/v3/files/relationships", methods=["POST"])
 def relationship_contents():
     params = request.json
     file_handler = FileHandler()
