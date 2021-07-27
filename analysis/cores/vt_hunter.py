@@ -67,10 +67,3 @@ class LiveHuntHandler:
             logger.error("[get_notification_files] Query Failed, Error Message >> {}".format(notified_files_json))
             return QUERY_FAILED
         return json_data
-
-    def process_notified_file(self, data_list: list):
-        api_flag = 0
-        api_key = self.vt_tools.get_api(api_flag)
-        for data_element in data_list:
-            id_value = data_element["id"]
-            id_attributes = data_element["attributes"]

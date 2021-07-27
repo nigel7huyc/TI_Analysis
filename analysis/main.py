@@ -7,6 +7,7 @@ from flask import Flask, jsonify, request
 
 from settings import *
 from cores.vt_hunter import LiveHuntHandler
+from cores.vt_files import FileHandler
 from utils.utils_log import LogFactory
 
 logger = LogFactory.get_log("hunter")
@@ -23,7 +24,7 @@ def get_health_status():
     return jsonify(response)
 
 
-@app.route('/v0.1/hunting/rules_info', methods=['GET'])
+@app.route('/v3/hunting/rules_info', methods=['GET'])
 def rules_info():
     live_hunter = LiveHuntHandler()
     rules_dict = live_hunter.get_ruleset_id()
@@ -36,12 +37,12 @@ def rules_info():
     return jsonify(response)
 
 
-@app.route("/v0.1/hunting/notification_info", methods=["POST"])
+@app.route("/v3/hunting/notification_info", methods=["POST"])
 def notification_info():
     params = request.json
     live_hunter = LiveHuntHandler()
     rule_id_value = params["rules_id"]
-    save_path = "hunting_notifications/{}.json".format(rule_id_value)
+    save_path = "hunting_notifications/{}_notifications.json".format(rule_id_value[:10])
     logger.info("[notification_info] The Rules ID is {}".format(rule_id_value))
     notifications_data = live_hunter.get_notification_files(rule_id_value)
     if type(notifications_data) is int:
@@ -50,6 +51,22 @@ def notification_info():
         response = error_msg(SUCCESS_CODE)
         store_jsonfile(save_path, notifications_data)
         logger.info("[notification_info] Store Notification Data into {}".format(save_path))
+    return jsonify(response)
+
+@app.route("/v3/Files/relationships", methods=["POST"])
+def relationship_contents():
+    params = request.json
+    file_handler = FileHandler()
+    file_id_value = params["file_id"]
+    save_path = "files/{}_relationships.json".format(file_id_value[:10])
+    logger.info("[relationship_contents] The File ID is {}".format(file_id_value))
+    relationship_data = file_handler.file_relationships(file_id_value)
+    if type(relationship_data) is int:
+        response = error_msg(relationship_data)
+    else:
+        response = error_msg(SUCCESS_CODE)
+        store_jsonfile(save_path, relationship_data)
+        logger.info("[relationship_contents] Store Relationships Data into {}".format(save_path))
     return jsonify(response)
 
 

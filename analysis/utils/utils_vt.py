@@ -30,10 +30,11 @@ class VTTools:
             while True:
                 params_dict["cursor"] = cursor_value
                 logger.info("[recall_cursor] The Header of Cursor {}".format(params_dict["cursor"][:10]))
+                logger.info("[recall_cursor] Query URL is {}".format(input_url))
                 json_data = client.get_json(input_url, params=params_dict)
                 if "data" in json_data:
                     final_data += json_data["data"]
-                    logger.info("There are {} element in {}".format(len(final_data), params_dict["cursor"][:10]))
+                    logger.info("[recall_cursor] There are {} element in {}".format(len(final_data), params_dict["cursor"][:10]))
                     if "cursor" in json_data["meta"]:
                         cursor_value = json_data["meta"]["cursor"]
                     else:
