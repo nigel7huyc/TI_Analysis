@@ -17,8 +17,13 @@ app = Flask(__name__)
 ApiDoc(app, title="TI Analysis API Notes", version="1.0.0")
 
 
+@app.route('/health', methods=['GET'])
+def get_health_status():
+    response = error_msg(HEALTH_OK)
+    return jsonify(response)
+
+
 @app.route('/v0.1/hunting/rules_info', methods=['GET'])
-@cross_origin()
 def rules_info():
     live_hunter = LiveHuntHandler()
     rules_dict = live_hunter.get_ruleset_id()
@@ -32,7 +37,6 @@ def rules_info():
 
 
 @app.route("/v0.1/hunting/notification_info", methods=["POST"])
-@cross_origin()
 def notification_info():
     params = request.json
     live_hunter = LiveHuntHandler()

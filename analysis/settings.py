@@ -15,6 +15,7 @@ log_dir = os.getenv("LOG_DIR", os.path.join(root_path, "log/analysis"))
 analysis_dir = os.getenv("ANALYSIS_DIR", os.path.join(root_path, "analysis"))
 
 # State Result Code
+HEALTH_OK = 0
 SUCCESS_CODE = 0
 QUERY_FAILED = -1
 
