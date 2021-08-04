@@ -67,11 +67,11 @@ def relationship_contents():
     else:
         response = error_msg(SUCCESS_CODE)
         store_jsonfile(save_path, relationship_data)
-        logger.info("[relationship_contents] Store Relationships Data into {}".format(save_path))
+        logger.info(
+            "[relationship_contents] Store Relationships Data into {}, There are {} Objects in JSON Files".format(
+                save_path, len(relationship_data)))
     return jsonify(response)
 
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, port=8000)
-
-

@@ -44,6 +44,16 @@ class LiveHuntHandler:
             ruleset_id_dict[id_value] = name_value
         return ruleset_id_dict
 
+    @staticmethod
+    def remove_duplicate_files(input_data):
+        [id_list, output_data] = [[], []]
+        for file_element in input_data:
+            id_value = file_element["id"]
+            if id_value not in id_list:
+                id_list.append(id_value)
+                output_data.append(file_element)
+        return output_data
+
     def get_notification_files(self, ruleset_id):
         """
 
@@ -66,4 +76,5 @@ class LiveHuntHandler:
         else:
             logger.error("[get_notification_files] Query Failed, Error Message >> {}".format(notified_files_json))
             return QUERY_FAILED
-        return json_data
+        distinct_notifications = self.remove_duplicate_files(json_data)
+        return distinct_notifications

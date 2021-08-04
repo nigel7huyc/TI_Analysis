@@ -19,11 +19,13 @@ HEALTH_OK = 0
 SUCCESS_CODE = 0
 QUERY_FAILED = -1
 
+
 # Define Store Directory
 def store_jsonfile(input_path, input_data):
     json_path = pathlib.Path(output_dir).joinpath(input_path).absolute().resolve()
     json_path.parent.mkdir(parents=True, exist_ok=True)
-    json_path.write_text(json.dumps(input_data))
+    json_path.write_text(json.dumps(input_data, indent=4, sort_keys=True))
+
 
 # Define Error Message Function
 def error_msg(error_code):
