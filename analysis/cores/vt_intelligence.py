@@ -143,5 +143,3 @@ class IntelligenceHandler:
                         the_sandbox = element_attributes["sandbox_name"]
                         self.get_pcap_packages(file_id, the_sandbox, key_word)
         return distinct_search_results
-
-
