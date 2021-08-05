@@ -83,8 +83,8 @@ class IntelligenceHandler:
 
     def get_pcap_packages(self, id_value, input_name, keyword):
         api_flag = 1
-        the_proxies = https_proxy
-        file_name = "{}_{}.pcap".format(id_value[:4], input_name)
+        the_proxies = {"https": https_proxy}
+        file_name = "{}_{}.pcap".format(id_value[:4], input_name.replace(" ", "_"))
         escaped_sandbox = input_name.replace(" ", "%20")
         api_key = self.vt_tools.get_api(api_flag)
         the_header = {"x-apikey": api_key}
@@ -103,7 +103,7 @@ class IntelligenceHandler:
             if res.status_code == requests.codes.ok:
                 with open(destination_path, 'wb') as f:
                     f.write(res.content)
-                logger.info("[get_pcap_packages] Store the PCAP Package")
+                logger.info("[get_pcap_packages] Store the PCAP Package >> {}".format(destination_path))
             else:
                 logger.error("[get_pcap_packages] Response Code: {}".format(res.status_code))
         except Exception as e:
