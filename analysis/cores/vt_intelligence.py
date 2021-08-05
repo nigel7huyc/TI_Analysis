@@ -61,7 +61,7 @@ class IntelligenceHandler:
         :param ruleset_id: id value of rules
         :type ruleset_id: str
         :return: notifications files information
-        :rtype: list
+        :rtype: json list
         """
         api_flag = 1
         params_dict = self.extra_params
@@ -82,6 +82,17 @@ class IntelligenceHandler:
         return distinct_notifications
 
     def get_pcap_packages(self, id_value, input_name, keyword):
+        """
+
+        :param id_value: The value of file's sha256
+        :type id_value: str
+        :param input_name: the name of sandbox
+        :type input_name: str
+        :param keyword: the name of family, input with the search API
+        :type keyword: str
+        :return: None, and store the pcap packages under output/pcap/{$keyword}
+        :rtype: NoneType
+        """
         api_flag = 1
         the_proxies = {"https": https_proxy}
         file_name = "{}_{}.pcap".format(id_value[:4], input_name.replace(" ", "_"))
@@ -111,6 +122,13 @@ class IntelligenceHandler:
         return
 
     def get_search_result(self, input_params):
+        """
+
+        :param input_params: the data content of search API
+        :type input_params: dict
+        :return: distinct search results
+        :rtype: json list
+        """
         api_flag = 1
         the_params = {}
         file_handler = FileHandler()

@@ -16,6 +16,13 @@ class FileHandler:
         self.vt_tools = VTTools()
 
     def file_relationships(self, file_id):
+        """
+
+        :param file_id: the value of file's sha256
+        :type file_id: str
+        :return: the communicate relationship of specific file
+        :rtype: json list
+        """
         api_flag = 1
         collected_dict = []
         api_key = self.vt_tools.get_api(api_flag)
@@ -49,6 +56,13 @@ class FileHandler:
         return collected_dict
 
     def file_behaviour(self, input_id):
+        """
+
+        :param input_id: the value of file's sha256
+        :type input_id: str
+        :return: the behavior of specified file
+        :rtype: json dict
+        """
         api_flag = 0
         time.sleep(15)
         params_dict = self.extra_params

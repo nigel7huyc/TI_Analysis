@@ -3,7 +3,7 @@ import vt
 import json
 from flask_docs import ApiDoc
 from flask_cors import cross_origin
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Blueprint
 
 from settings import *
 from cores.vt_intelligence import IntelligenceHandler
@@ -15,17 +15,58 @@ logger = LogFactory.get_log("audit")
 # Initialize APP
 app = Flask(__name__)
 
+# Api Document needs to be displayed
+app.config["API_DOC_MEMBER"] = ["intelligence", "files", "config"]
+
 ApiDoc(app, title="TI Analysis API Notes", version="1.0.0")
 
+files = Blueprint("files", __name__)
+config = Blueprint("config", __name__)
+intelligence = Blueprint("intelligence", __name__)
 
-@app.route('/health', methods=['GET'])
+
+@config.route('/health', methods=['GET'])
 def get_health_status():
+    """ check the health of api
+
+    @@@
+    ### args
+    None
+
+    ### request
+    ```
+    http://127.0.0.1:5000/config/health
+    ```
+
+    ### return
+    ```json
+    {"code": "0", "message": "SUCCESS"}
+    ```
+    @@@
+    """
     response = error_msg(HEALTH_OK)
     return jsonify(response)
 
 
-@app.route('/v3/intelligence/rules_info', methods=['GET'])
+@intelligence.route('/v3/rules_info', methods=['GET'])
 def rules_info():
+    """ get enabled ruleset information
+
+    @@@
+    ### args
+    None
+
+    ### request
+    ```
+    http://127.0.0.1:5000/intelligence/v3/rules_info
+    ```
+
+    ### return
+    ```json
+    {"code": "0", "message": "SUCCESS", "data": {ruleset_id_X: ruleset_name_X, ...}}
+    ```
+    @@@
+    """
     intelligence_handler = IntelligenceHandler()
     rules_dict = intelligence_handler.get_ruleset_id()
     if type(rules_dict) is int or rules_dict is None:
@@ -37,8 +78,32 @@ def rules_info():
     return jsonify(response)
 
 
-@app.route("/v3/intelligence/notification_info", methods=["POST"])
+@intelligence.route("/v3/notification_info", methods=["POST"])
 def notification_info():
+    """ get the notifications of specific rules set id
+
+    @@@
+    ### args
+    |  args | nullable | request type | type |  remarks |
+    |-------|----------|--------------|------|----------|
+    |  rules_id |  false   |    body     | str  | The id of specific rules set |
+
+
+    ### request
+    ```
+    http://127.0.0.1:5000/intelligence/v3/notification_info
+    ```
+
+    ### return
+    ```json
+    {"code": "0", "message": "SUCCESS"}
+    ```
+
+    ### Output
+    * Output_Dir: `output/hunting_notifications/`
+    * Filename: `{$RULESET_ID}_notifications.json`
+    @@@
+    """
     params = request.json
     intelligence_handler = IntelligenceHandler()
     rule_id_value = params["rules_id"]
@@ -54,8 +119,38 @@ def notification_info():
     return jsonify(response)
 
 
-@app.route("/v3/intelligence/search", methods=["POST"])
+@intelligence.route("/v3/search", methods=["POST"])
 def intelligence_search():
+    """ search with specific query conditions
+    @@@
+    ### args
+    |  args | nullable | request type | type |  remarks |
+    |-------|----------|--------------|------|----------|
+    |  key  |  false   |     body     | str  |  The keyword of this search    |
+    | limit |   True   |     body     | str  |  The number of element in this search, less than 300     |
+    | query |  false   |     body     | str  |  The condition of this search        |
+    | order |   True   |     body     | str  |  The order of this search result        |
+
+
+    ### request
+    ```
+    http://127.0.0.1:5000/intelligence/v3/search
+    ```
+
+    ### return
+    ```json
+    {"code": "0", "message": "SUCCESS"}
+    ```
+
+    ### Output
+    * search result record
+        * Output_Dir: `output/search_results/`
+        * Filename: `{$INPUT_QUERY_CONDITIONS}_search.json`
+    * pcap packages (if "have:pcap" in query)
+        * Output_Dir: `output/pcap/`
+        * Filename: `{$KEY}/{$FILE_ID[:4]}_{$SANDBOX_NAME}.pcap`
+    @@@
+    """
     params = request.json
     query_info = params.get("query")
     intelligence_handler = IntelligenceHandler()
@@ -70,8 +165,32 @@ def intelligence_search():
     return jsonify(response)
 
 
-@app.route("/v3/files/relationships", methods=["POST"])
+@files.route("/v3/relationships", methods=["POST"])
 def relationship_contents():
+    """ get the communicate relationships of the specific file
+
+    @@@
+    ### args
+    |  args | nullable | request type | type |  remarks |
+    |-------|----------|--------------|------|----------|
+    |  file_id |  false   |    body     | str  | The id of specific file |
+
+
+    ### request
+    ```
+    http://127.0.0.1:5000/files/v3/relationships
+    ```
+
+    ### return
+    ```json
+    {"code": "0", "message": "SUCCESS"}
+    ```
+
+    ### Output
+    * Output_Dir: `output/files/`
+    * Filename: `{$FILE_ID}_relationships.json`
+    @@@
+    """
     params = request.json
     file_handler = FileHandler()
     file_id_value = params["file_id"]
@@ -88,6 +207,10 @@ def relationship_contents():
                 save_path, len(relationship_data)))
     return jsonify(response)
 
+
+app.register_blueprint(files, url_prefix="/files")
+app.register_blueprint(config, url_prefix="/config")
+app.register_blueprint(intelligence, url_prefix="/intelligence")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, port=8000)
