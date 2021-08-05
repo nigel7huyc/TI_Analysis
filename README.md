@@ -11,7 +11,7 @@ TI_Analysis
 |-- analysis
 |---- cores
 |------ __init__.py
-|------ vt_hunter.py
+|------ vt_intelligence.py
 |---- utils
 |------ __init__.py
 |------ utils_conf.py

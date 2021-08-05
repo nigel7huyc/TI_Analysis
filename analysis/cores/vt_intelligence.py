@@ -6,7 +6,7 @@ from utils.utils_vt import VTTools
 logger = LogFactory.get_log("audit")
 
 
-class LiveHuntHandler:
+class IntelligenceHandler:
     def __init__(self):
         self.url_prefix = "/intelligence"
         self.extra_params = {

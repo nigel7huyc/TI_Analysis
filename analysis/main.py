@@ -6,7 +6,7 @@ from flask_cors import cross_origin
 from flask import Flask, jsonify, request
 
 from settings import *
-from cores.vt_hunter import LiveHuntHandler
+from cores.vt_intelligence import IntelligenceHandler
 from cores.vt_files import FileHandler
 from utils.utils_log import LogFactory
 
@@ -26,7 +26,7 @@ def get_health_status():
 
 @app.route('/v3/hunting/rules_info', methods=['GET'])
 def rules_info():
-    live_hunter = LiveHuntHandler()
+    live_hunter = IntelligenceHandler()
     rules_dict = live_hunter.get_ruleset_id()
     if type(rules_dict) is int or rules_dict is None:
         response = error_msg(rules_dict)
@@ -40,7 +40,7 @@ def rules_info():
 @app.route("/v3/hunting/notification_info", methods=["POST"])
 def notification_info():
     params = request.json
-    live_hunter = LiveHuntHandler()
+    live_hunter = IntelligenceHandler()
     rule_id_value = params["rules_id"]
     save_path = "hunting_notifications/{}_notifications.json".format(rule_id_value[:10])
     logger.info("[notification_info] The Rules ID is {}".format(rule_id_value))
