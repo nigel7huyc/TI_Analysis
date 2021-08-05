@@ -1,4 +1,5 @@
 import vt
+import time
 from settings import *
 from utils.utils_log import LogFactory
 from utils.utils_vt import VTTools
@@ -46,3 +47,18 @@ class FileHandler:
             else:
                 continue
         return collected_dict
+
+    def file_behaviour(self, input_id):
+        api_flag = 0
+        time.sleep(15)
+        params_dict = self.extra_params
+        api_key = self.vt_tools.get_api(api_flag)
+        query_url = os.path.join(self.url_prefix, input_id, "behaviours")
+        try:
+            with vt.Client(api_key, trust_env=True) as client:
+                behaviour_results = client.get_json(query_url, params=params_dict)
+                logger.info("[file_behaviour] Get the File Behaviour Results")
+        except Exception as e:
+            logger.error("[file_behaviour] Query Failed, the Error >> {}".format(e))
+            return None
+        return behaviour_results

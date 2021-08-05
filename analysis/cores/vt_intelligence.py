@@ -1,7 +1,10 @@
 import vt
+import requests
+
 from settings import *
 from utils.utils_log import LogFactory
 from utils.utils_vt import VTTools
+from vt_files import FileHandler
 
 logger = LogFactory.get_log("audit")
 
@@ -78,9 +81,37 @@ class IntelligenceHandler:
         distinct_notifications = self.remove_duplicate_id(json_data)
         return distinct_notifications
 
+    def get_pcap_packages(self, id_value, input_name, keyword):
+        api_flag = 1
+        the_proxies = https_proxy
+        file_name = "{}_{}.pcap".format(id_value[:4], input_name)
+        escaped_sandbox = input_name.replace(" ", "%20")
+        api_key = self.vt_tools.get_api(api_flag)
+        the_header = {"x-apikey": api_key}
+        url = 'https://www.virustotal.com/api/v3/file_behaviours/{}_{}/pcap'.format(id_value, escaped_sandbox)
+        store_dir = pathlib.Path(os.path.join(output_dir, "pcap", keyword))
+        store_dir.parent.mkdir(parents=True, exist_ok=True)
+        store_dir.mkdir(parents=True, exist_ok=True)
+        destination_path = store_dir.joinpath(file_name).resolve().absolute()
+        if destination_path.exists():
+            logger.info("[get_pcap_packages] The PCAP Package is Existed")
+            return
+        logger.info(
+            "[get_pcap_packages] Start to Downloading the PCAP Package for {} in {}".format(id_value, input_name))
+        res = requests.get(url, headers=the_header, verify=False, allow_redirects=True, proxies=the_proxies)
+        if res.status_code == requests.codes.ok:
+            with open(destination_path, 'wb') as f:
+                f.write(res.content)
+            logger.info("[get_pcap_packages] Store the PCAP Package")
+        else:
+            logger.error("[get_pcap_packages] Response Code: {}".format(res.status_code))
+        return
+
     def get_search_result(self, input_params):
         api_flag = 1
         the_params = {}
+        file_handler = FileHandler()
+        key_word = input_params["key"]
         params_dict = self.extra_params
         params_dict["limit"] = input_params.get("limit", 300)
         params_dict["query"] = input_params.get("query")
@@ -97,8 +128,18 @@ class IntelligenceHandler:
         except Exception as e:
             logger.error("[get_search_result] Query Failed, Error Message >> {}".format(e))
             return QUERY_FAILED
+        total_hits = search_results["meta"].get("total_hits")
+        logger.info("There are {} Fit Files".format(total_hits))
         json_data = search_results.get("data")
         distinct_search_results = self.remove_duplicate_id(json_data)
+        if "have:pcap" in input_params.get("query"):
+            for element in distinct_search_results:
+                file_id = element["id"]
+                logger.info("Check the behaviour of {}".format(file_id[:10]))
+                behaviours_result = file_handler.file_behaviour(file_id)
+                for behaviour_element in behaviours_result:
+                    element_attributes = behaviour_element["attributes"]
+                    if "has_pcap" in element_attributes:
+                        the_sandbox = element_attributes["sandbox_name"]
+                        self.get_pcap_packages(file_id, the_sandbox, key_word)
         return distinct_search_results
-
-

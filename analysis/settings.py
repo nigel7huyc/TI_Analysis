@@ -13,6 +13,7 @@ conf_dir = os.getenv("CONF_DIR", os.path.join(root_path, "conf"))
 output_dir = os.getenv("OUTPUT_DIR", os.path.join(root_path, "output"))
 log_dir = os.getenv("LOG_DIR", os.path.join(root_path, "log/analysis"))
 analysis_dir = os.getenv("ANALYSIS_DIR", os.path.join(root_path, "analysis"))
+https_proxy = os.getenv("HTTPS_PROXY", {})
 
 # State Result Code
 HEALTH_OK = 0
