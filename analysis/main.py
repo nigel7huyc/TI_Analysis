@@ -10,7 +10,7 @@ from cores.vt_intelligence import IntelligenceHandler
 from cores.vt_files import FileHandler
 from utils.utils_log import LogFactory
 
-logger = LogFactory.get_log("hunter")
+logger = LogFactory.get_log("audit")
 
 # Initialize APP
 app = Flask(__name__)
