@@ -4,7 +4,7 @@ import requests
 from settings import *
 from utils.utils_log import LogFactory
 from utils.utils_vt import VTTools
-from vt_files import FileHandler
+from cores.vt_files import FileHandler
 
 logger = LogFactory.get_log("audit")
 
