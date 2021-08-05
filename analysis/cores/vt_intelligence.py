@@ -80,19 +80,20 @@ class IntelligenceHandler:
 
     def get_search_result(self, input_params):
         api_flag = 1
+        the_params = {}
         params_dict = self.extra_params
         params_dict["limit"] = input_params.get("limit", 300)
         params_dict["query"] = input_params.get("query")
         params_dict["order"] = input_params.get("order")
-        for key_value in params_dict:
-            if params_dict["key_value"] is None:
-                del params_dict[key_value]
-        logger.info("[get_search_result] The Input Parameters is {}".format(params_dict))
+        for key_value in params_dict.keys():
+            if params_dict[key_value] is not None:
+                the_params[key_value] = params_dict[key_value]
+        logger.info("[get_search_result] The Input Parameters is {}".format(the_params))
         api_key = self.vt_tools.get_api(api_flag)
         query_url = os.path.join(self.url_prefix, "search")
         try:
             with vt.Client(api_key, trust_env=True) as client:
-                search_results = client.get_json(query_url, params=params_dict)
+                search_results = client.get_json(query_url, params=the_params)
         except Exception as e:
             logger.error("[get_search_result] Query Failed, Error Message >> {}".format(e))
             return QUERY_FAILED
