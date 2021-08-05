@@ -1,6 +1,6 @@
 {
   "log_name": {
-    "hunter": "hunter.log"
+    "audit": "audit.log"
   },
   "log_level": 10,
   "log_format": "%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s"

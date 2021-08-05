@@ -1,12 +1,9 @@
-import os
 import vt
-import json
-import requests
 from settings import *
 from utils.utils_log import LogFactory
 from utils.utils_vt import VTTools
 
-logger = LogFactory.get_log("hunter")
+logger = LogFactory.get_log("audit")
 
 
 class LiveHuntHandler:
