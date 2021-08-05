@@ -137,7 +137,7 @@ class IntelligenceHandler:
                 file_id = element["id"]
                 logger.info("Check the behaviour of {}".format(file_id[:10]))
                 behaviours_result = file_handler.file_behaviour(file_id)
-                for behaviour_element in behaviours_result:
+                for behaviour_element in behaviours_result["data"]:
                     element_attributes = behaviour_element["attributes"]
                     if "has_pcap" in element_attributes:
                         the_sandbox = element_attributes["sandbox_name"]
