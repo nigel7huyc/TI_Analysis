@@ -54,7 +54,7 @@ def notification_info():
     return jsonify(response)
 
 
-@app.route("/v3/intelligence/notification_info", methods=["POST"])
+@app.route("/v3/intelligence/search", methods=["POST"])
 def intelligence_search():
     params = request.json
     query_info = params.get("query")
