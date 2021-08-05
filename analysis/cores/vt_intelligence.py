@@ -96,15 +96,18 @@ class IntelligenceHandler:
         if destination_path.exists():
             logger.info("[get_pcap_packages] The PCAP Package is Existed")
             return
-        logger.info(
-            "[get_pcap_packages] Start to Downloading the PCAP Package for {} in {}".format(id_value, input_name))
-        res = requests.get(url, headers=the_header, verify=False, allow_redirects=True, proxies=the_proxies)
-        if res.status_code == requests.codes.ok:
-            with open(destination_path, 'wb') as f:
-                f.write(res.content)
-            logger.info("[get_pcap_packages] Store the PCAP Package")
-        else:
-            logger.error("[get_pcap_packages] Response Code: {}".format(res.status_code))
+        try:
+            logger.info(
+                "[get_pcap_packages] Start to Downloading the PCAP Package from {}".format(url))
+            res = requests.get(url, headers=the_header, verify=False, proxies=the_proxies)
+            if res.status_code == requests.codes.ok:
+                with open(destination_path, 'wb') as f:
+                    f.write(res.content)
+                logger.info("[get_pcap_packages] Store the PCAP Package")
+            else:
+                logger.error("[get_pcap_packages] Response Code: {}".format(res.status_code))
+        except Exception as e:
+            logger.error("[get_pcap_packages] Downloading Failed, the Error is {}".format(e))
         return
 
     def get_search_result(self, input_params):
