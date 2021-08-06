@@ -134,7 +134,7 @@ class IntelligenceHandler:
         file_handler = FileHandler()
         key_word = input_params["key"]
         params_dict = self.extra_params
-        params_dict["limit"] = input_params.get("limit", 300)
+        params_dict["limit"] = input_params.get("limit", 40)
         params_dict["query"] = input_params.get("query")
         params_dict["order"] = input_params.get("order")
         download_flag = int(input_params.get("download_pcap"))
