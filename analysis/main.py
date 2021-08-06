@@ -130,6 +130,7 @@ def intelligence_search():
     | limit |   True   |     body     | str  |  The number of element in this search, less than 300     |
     | query |  false   |     body     | str  |  The condition of this search        |
     | order |   True   |     body     | str  |  The order of this search result        |
+    | download_pcap  |   True  |     body     |  "0" / "1" | Download or not the pcap packages |
 
 
     ### request
