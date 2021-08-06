@@ -147,7 +147,7 @@ def intelligence_search():
     * search result record
         * Output_Dir: `output/search_results/`
         * Filename: `{$INPUT_QUERY_CONDITIONS}_search.json`
-    * pcap packages (if `have:pcap` in query)
+    * pcap packages (if `have:pcap` in query AND `download_pcap=="1"`)
         * Output_Dir: `output/pcap/`
         * Filename: `{$KEY}/{$FILE_ID[:4]}_{$SANDBOX_NAME}.pcap`
     @@@
