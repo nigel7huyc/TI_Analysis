@@ -23,7 +23,7 @@ class FileHandler:
         :return: the communicate relationship of specific file
         :rtype: json list
         """
-        api_flag = 1
+        api_flag = 0
         collected_dict = []
         api_key = self.vt_tools.get_api(api_flag)
         query_url = os.path.join(self.url_prefix, file_id)
