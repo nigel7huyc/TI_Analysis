@@ -131,13 +131,10 @@ class IntelligenceHandler:
         """
         api_flag = 1
         the_params = {}
-        file_handler = FileHandler()
-        key_word = input_params["key"]
         params_dict = self.extra_params
         params_dict["limit"] = input_params.get("limit", 40)
         params_dict["query"] = input_params.get("query")
         params_dict["order"] = input_params.get("order")
-        download_flag = int(input_params.get("download_pcap"))
         for key_value in params_dict.keys():
             if params_dict[key_value] is not None:
                 the_params[key_value] = params_dict[key_value]
@@ -154,14 +151,4 @@ class IntelligenceHandler:
         logger.info("There are {} Fit Files".format(total_hits))
         json_data = search_results.get("data")
         distinct_search_results = self.remove_duplicate_id(json_data)
-        if "have:pcap" in input_params.get("query") and download_flag == 1:
-            for element in distinct_search_results:
-                file_id = element["id"]
-                logger.info("Check the behaviour of {}".format(file_id[:10]))
-                behaviours_result = file_handler.file_behaviour(file_id)
-                for behaviour_element in behaviours_result["data"]:
-                    element_attributes = behaviour_element["attributes"]
-                    if "has_pcap" in element_attributes:
-                        the_sandbox = element_attributes["sandbox_name"]
-                        self.get_pcap_packages(file_id, the_sandbox, key_word)
         return distinct_search_results

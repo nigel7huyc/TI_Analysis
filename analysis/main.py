@@ -1,6 +1,7 @@
 import os
 import vt
 import json
+from datetime import datetime
 from flask_docs import ApiDoc
 from flask_cors import cross_origin
 from flask import Flask, jsonify, request, Blueprint
@@ -126,11 +127,11 @@ def intelligence_search():
     ### args
     |  args | nullable | request type | type |  remarks |
     |-------|----------|--------------|------|----------|
-    |  key  |  false   |     body     | str  |  The keyword of this search    |
-    | limit |   True   |     body     | str  |  The number of element in this search, less than 300, default 40     |
+    |  key  |  false   |     body     | str  |  The keyword of store directory name in the search   |
+    | limit |   True   |     body     | int  |  The number of element in this search, less than 300, default 40     |
     | query |  false   |     body     | str  |  The condition of this search        |
     | order |   True   |     body     | str  |  The order of this search result        |
-    | download_pcap  |   True  |     body     |  "0" / "1" | Download or not the pcap packages |
+    | download_pcap  |   True  |     body     |  0 / 1 | Download or not the pcap packages |
 
 
     ### request
@@ -153,9 +154,14 @@ def intelligence_search():
     @@@
     """
     params = request.json
+    today = datetime.now()
+    file_handler = FileHandler()
+    key_word = params.get("key")
     query_info = params.get("query")
+    dt_string = today.strftime("%d_%m_%Y-%H:%M:%S")
+    download_flag = int(params.get("download_pcap"))
     intelligence_handler = IntelligenceHandler()
-    save_path = "search_results/{}_search.json".format("_".join(query_info.split(" ")))
+    save_path = "search_results/{}-{}_search.json".format(dt_string, "_".join(query_info.split(" ")))
     search_results = intelligence_handler.get_search_result(params)
     if type(search_results) is int:
         response = error_msg(search_results)
@@ -163,6 +169,16 @@ def intelligence_search():
         response = error_msg(SUCCESS_CODE)
         store_jsonfile(save_path, search_results)
         logger.info("[intelligence_search] Store Notification Data into {}".format(save_path))
+    if "have:pcap" in query_info and download_flag == 1:
+        for element in search_results:
+            file_id = element["id"]
+            logger.info("Check the behaviour of {}".format(file_id[:10]))
+            behaviours_result = file_handler.file_behaviour(file_id)
+            for behaviour_element in behaviours_result["data"]:
+                element_attributes = behaviour_element["attributes"]
+                if "has_pcap" in element_attributes:
+                    the_sandbox = element_attributes["sandbox_name"]
+                    intelligence_handler.get_pcap_packages(file_id, the_sandbox, key_word)
     return jsonify(response)
 
 
