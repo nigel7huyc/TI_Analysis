@@ -108,7 +108,7 @@ def notification_info():
     params = request.json
     intelligence_handler = IntelligenceHandler()
     rule_id_value = params["rules_id"]
-    save_path = "hunting_notifications/{}_notifications.json".format(rule_id_value[:10])
+    save_path = "hunting_notifications/{}_notifications.json".format(rule_id_value[:8])
     logger.info("[notification_info] The Rules ID is {}".format(rule_id_value))
     notifications_data = intelligence_handler.get_notification_files(rule_id_value)
     if type(notifications_data) is int:
@@ -127,7 +127,7 @@ def intelligence_search():
     ### args
     |  args | nullable | request type | type |  remarks |
     |-------|----------|--------------|------|----------|
-    |  key  |  false   |     body     | str  |  The keyword of store directory name in the search   |
+    |  tag  |  false   |     body     | str  |  The directory keyword of store pcap packages in the search   |
     | limit |   True   |     body     | int  |  The number of element in this search, less than 300, default 40     |
     | query |  false   |     body     | str  |  The condition of this search        |
     | order |   True   |     body     | str  |  The order of this search result        |
@@ -148,15 +148,15 @@ def intelligence_search():
     * search result record
         * Output_Dir: `output/search_results/`
         * Filename: `{$INPUT_QUERY_CONDITIONS}_search.json`
-    * pcap packages (if `have:pcap` in query AND `download_pcap=="1"`)
+    * pcap packages (if `have:pcap` in query AND `download_pcap==1`)
         * Output_Dir: `output/pcap/`
-        * Filename: `{$KEY}/{$FILE_ID[:4]}_{$SANDBOX_NAME}.pcap`
+        * Filename: `{$KEY}/{$FILE_ID[:8]}_{$SANDBOX_NAME}.pcap`
     @@@
     """
     params = request.json
     today = datetime.now()
     file_handler = FileHandler()
-    key_word = params.get("key")
+    tag_value = params.get("tag", "files")
     query_info = params.get("query")
     dt_string = today.strftime("%d_%m_%Y-%H:%M:%S")
     download_flag = int(params.get("download_pcap"))
@@ -172,13 +172,69 @@ def intelligence_search():
     if "have:pcap" in query_info and download_flag == 1:
         for element in search_results:
             file_id = element["id"]
-            logger.info("Check the behaviour of {}".format(file_id[:10]))
+            logger.info("Check the behaviour of {}".format(file_id[:8]))
             behaviours_result = file_handler.file_behaviour(file_id)
             for behaviour_element in behaviours_result["data"]:
                 element_attributes = behaviour_element["attributes"]
                 if "has_pcap" in element_attributes:
                     the_sandbox = element_attributes["sandbox_name"]
-                    intelligence_handler.get_pcap_packages(file_id, the_sandbox, key_word)
+                    intelligence_handler.get_pcap_packages(file_id, the_sandbox, tag_value)
+    return jsonify(response)
+
+
+@files.route("v3/behaviours", method=["POST"])
+def get_file_behaviours():
+    """ search with specific query conditions
+        @@@
+        ### args
+        |  args | nullable | request type | type |  remarks |
+        |-------|----------|--------------|------|----------|
+        |  tag  |  false   |     body     | str  |  The directory keyword of store pcap packages in the search   |
+        | file_id |  false   |     body     | str  |  The file is specified to search its behavior |
+        | download_pcap  |   True  |     body     |  0 / 1 | Download or not the pcap packages |
+
+
+        ### request
+        ```
+        http://127.0.0.1:5000/intelligence/v3/behaviours
+        ```
+
+        ### return
+        ```json
+        {"code": "0", "message": "SUCCESS"}
+        ```
+
+        ### Output
+        * search result record
+            * Output_Dir: `output/behaviours/`
+            * Filename: `{$FILE_ID[:8]}_behaviours.json`
+        * pcap packages (if `download_pcap==1`)
+            * Output_Dir: `output/pcap/`
+            * Filename: `{$KEY}/{$FILE_ID[:8]}_{$SANDBOX_NAME}.pcap`
+        @@@
+        """
+    params = request.json
+    file_handler = FileHandler()
+    tag_value = params.get("tag", "files")
+    file_id = params.get("file_id")
+    intelligence_handler = IntelligenceHandler()
+    download_flag = int(params.get("download_pcap", 0))
+    save_path = "behaviours/{}_behaviours.json".format(file_id[:8])
+    logger.info("[get_file_behaviours] Start to Grab the file's behaviour for {}".format(file_id))
+    results = file_handler.file_behaviour(file_id)
+    if results is None:
+        response = error_msg(QUERY_FAILED)
+    else:
+        response = error_msg(SUCCESS_CODE)
+        the_file_behaviours = results["data"]
+        store_jsonfile(save_path, the_file_behaviours)
+        if download_flag:
+            logger.info("[get_file_behaviours] Start to Download the PCAP Packages")
+            for element in the_file_behaviours:
+                attributes_content = element["attributes"]
+                the_sandbox = attributes_content.get("sandbox_name")
+                if the_sandbox is not None:
+                    intelligence_handler.get_pcap_packages(file_id, the_sandbox, tag_value)
     return jsonify(response)
 
 
@@ -211,7 +267,7 @@ def relationship_contents():
     params = request.json
     file_handler = FileHandler()
     file_id_value = params["file_id"]
-    save_path = "files/{}_relationships.json".format(file_id_value[:10])
+    save_path = "files/{}_relationships.json".format(file_id_value[:8])
     logger.info("[relationship_contents] The File ID is {}".format(file_id_value))
     relationship_data = file_handler.file_relationships(file_id_value)
     if type(relationship_data) is int:
