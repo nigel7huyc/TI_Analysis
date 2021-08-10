@@ -95,7 +95,7 @@ class IntelligenceHandler:
         """
         api_flag = 1
         the_proxies = {"https": https_proxy}
-        file_name = "{}_{}.pcap".format(id_value[:4], input_name.replace(" ", "_"))
+        file_name = "{}_{}.pcap".format(id_value[:8], input_name.replace(" ", "_"))
         escaped_sandbox = input_name.replace(" ", "%20")
         api_key = self.vt_tools.get_api(api_flag)
         the_header = {"x-apikey": api_key}
