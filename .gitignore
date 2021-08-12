@@ -1,5 +1,6 @@
 ### IDE
 .idea/
+envs/certificate.env
 
 ### For this Project
 log/*/*.log
