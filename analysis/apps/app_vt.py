@@ -145,7 +145,7 @@ def intelligence_search():
     return jsonify(response)
 
 
-@files_app.route("v3/behaviours", methods=["POST"])
+@files_app.route("/v3/behaviours", methods=["POST"])
 def get_file_behaviours():
     """ search with specific query conditions
         @@@
