@@ -147,7 +147,7 @@ def intelligence_search():
 
 @files_app.route("/v3/behaviours", methods=["POST"])
 def get_file_behaviours():
-    """ search with specific query conditions
+    """ Query the behaviours with specific file
         @@@
         ### args
         |  args | nullable | request type | type |  remarks |
