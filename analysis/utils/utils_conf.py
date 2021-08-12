@@ -1,7 +1,3 @@
-import os
-import json
-import pathlib
-import configparser
 from settings import *
 
 
