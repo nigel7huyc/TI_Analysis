@@ -6,3 +6,4 @@ supervisor == 4.2.0
 requests == 2.25.1
 vt-py == 0.7.0
 flask_docs == 0.4.9
+shodan == 1.25.0
