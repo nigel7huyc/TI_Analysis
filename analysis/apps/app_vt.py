@@ -148,34 +148,34 @@ def intelligence_search():
 @files_app.route("/v3/behaviours", methods=["POST"])
 def get_file_behaviours():
     """ Query the behaviours with specific file
-        @@@
-        ### args
-        |  args | nullable | request type | type |  remarks |
-        |-------|----------|--------------|------|----------|
-        |  tag  |  false   |     body     | str  |  The directory keyword of store pcap packages in the search   |
-        | file_id |  false   |     body     | str  |  The file is specified to search its behavior |
-        | download_pcap  |   True  |     body     |  0 / 1 | Download or not the pcap packages |
+    @@@
+    ### args
+    |  args | nullable | request type | type |  remarks |
+    |-------|----------|--------------|------|----------|
+    |  tag  |  false   |     body     | str  |  The directory keyword of store pcap packages in the search   |
+    | file_id |  false   |     body     | str  |  The file is specified to search its behavior |
+    | download_pcap  |   True  |     body     |  0 / 1 | Download or not the pcap packages |
 
 
-        ### request
-        ```
-        http://127.0.0.1:5000/intelligence/v3/behaviours
-        ```
+    ### request
+    ```
+    http://127.0.0.1:5000/files/v3/behaviours
+    ```
 
-        ### return
-        ```json
-        {"code": "0", "message": "SUCCESS"}
-        ```
+    ### return
+    ```json
+    {"code": "0", "message": "SUCCESS"}
+    ```
 
-        ### Output
-        * search result record
-            * Output_Dir: `output/behaviours/`
-            * Filename: `{$FILE_ID[:8]}_behaviours.json`
-        * pcap packages (if `download_pcap==1`)
-            * Output_Dir: `output/pcap/`
-            * Filename: `{$KEY}/{$FILE_ID[:8]}_{$SANDBOX_NAME}.pcap`
-        @@@
-        """
+    ### Output
+    * search result record
+        * Output_Dir: `output/behaviours/`
+        * Filename: `{$FILE_ID[:8]}_behaviours.json`
+    * pcap packages (if `download_pcap==1`)
+        * Output_Dir: `output/pcap/`
+        * Filename: `{$KEY}/{$FILE_ID[:8]}_{$SANDBOX_NAME}.pcap`
+    @@@
+    """
     params = request.json
     file_handler = FileHandler()
     tag_value = params.get("tag", "files")
