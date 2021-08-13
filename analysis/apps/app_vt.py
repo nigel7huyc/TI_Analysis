@@ -8,11 +8,10 @@ from utils.utils_log import LogFactory
 
 logger = LogFactory.get_log("audit")
 
-files_app = Blueprint("files", __name__)
-intelligence_app = Blueprint("intelligence", __name__)
+vt_app = Blueprint("vt", __name__)
 
 
-@intelligence_app.route('/v3/rules_info', methods=['GET'])
+@vt_app.route('/v3/intelligence/rules_info', methods=['GET'])
 def rules_info():
     """ get enabled ruleset information
 
@@ -22,7 +21,7 @@ def rules_info():
 
     ### request
     ```
-    http://127.0.0.1:5000/intelligence/v3/rules_info
+    http://127.0.0.1:5000/vt/v3/intelligence/rules_info
     ```
 
     ### return
@@ -42,7 +41,7 @@ def rules_info():
     return jsonify(response)
 
 
-@intelligence_app.route("/v3/notification_info", methods=["POST"])
+@vt_app.route("/v3/intelligence/notification_info", methods=["POST"])
 def notification_info():
     """ get the notifications of specific rules set id
 
@@ -55,7 +54,7 @@ def notification_info():
 
     ### request
     ```
-    http://127.0.0.1:5000/intelligence/v3/notification_info
+    http://127.0.0.1:5000/vt/v3/intelligence/notification_info
     ```
 
     ### return
@@ -83,7 +82,7 @@ def notification_info():
     return jsonify(response)
 
 
-@intelligence_app.route("/v3/search", methods=["POST"])
+@vt_app.route("/v3/intelligence/search", methods=["POST"])
 def intelligence_search():
     """ search with specific query conditions
     @@@
@@ -99,7 +98,7 @@ def intelligence_search():
 
     ### request
     ```
-    http://127.0.0.1:5000/intelligence/v3/search
+    http://127.0.0.1:5000/vt/v3/intelligence/search
     ```
 
     ### return
@@ -145,7 +144,7 @@ def intelligence_search():
     return jsonify(response)
 
 
-@files_app.route("/v3/behaviours", methods=["POST"])
+@vt_app.route("/v3/files/behaviours", methods=["POST"])
 def get_file_behaviours():
     """ Query the behaviours with specific file
     @@@
@@ -159,7 +158,7 @@ def get_file_behaviours():
 
     ### request
     ```
-    http://127.0.0.1:5000/files/v3/behaviours
+    http://127.0.0.1:5000/vt/v3/files/behaviours
     ```
 
     ### return
@@ -201,7 +200,7 @@ def get_file_behaviours():
     return jsonify(response)
 
 
-@files_app.route("/v3/relationships", methods=["POST"])
+@vt_app.route("/v3/files/relationships", methods=["POST"])
 def relationship_contents():
     """ get the communicate relationships of the specific file
 
@@ -214,7 +213,7 @@ def relationship_contents():
 
     ### request
     ```
-    http://127.0.0.1:5000/files/v3/relationships
+    http://127.0.0.1:5000/v3/files/relationships
     ```
 
     ### return
