@@ -1,6 +1,5 @@
 ### IDE
 .idea/
-envs/certificate.env
 
 ### For this Project
 log/*/*.log
@@ -159,4 +158,3 @@ ipython_config.py
 # Remove previous ipynb_checkpoints
 #   git rm -r .ipynb_checkpoints/
 
-*.env
